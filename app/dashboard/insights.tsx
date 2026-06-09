@@ -1,7 +1,9 @@
-import { ScrollView, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { SectionCard } from "../../components/SectionCard";
-import { isSupabaseConfigured } from "../../lib/supabase";
+import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 
 const weeklyHighlights = [
   {
@@ -22,22 +24,46 @@ const weeklyHighlights = [
 ];
 
 export default function InsightsScreen() {
+  const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    await supabase.auth.signOut();
+    setIsSigningOut(false);
+    router.replace("/welcome");
+  };
+
   return (
     <ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 24, paddingBottom: 120 }}
     >
-      <View className="mb-6">
-        <Text className="text-sm font-medium uppercase tracking-[2px] text-pulse-600">
-          Weekly view
-        </Text>
-        <Text className="mt-3 text-4xl font-semibold leading-tight text-ink">
-          Spot patterns before they snowball
-        </Text>
-        <Text className="mt-3 text-base leading-7 text-slate-500">
-          This screen is ready for charts and trend logic once your `checkins` table is
-          populated.
-        </Text>
+      <View className="mb-6 flex-row items-start justify-between gap-4">
+        <View className="flex-1">
+          <Text className="text-sm font-medium uppercase tracking-[2px] text-pulse-600">
+            Weekly view
+          </Text>
+          <Text className="mt-3 text-4xl font-semibold leading-tight text-ink">
+            Spot patterns before they snowball
+          </Text>
+          <Text className="mt-3 text-base leading-7 text-slate-500">
+            This screen is ready for charts and trend logic once your `checkins` table is
+            populated.
+          </Text>
+        </View>
+
+        <Pressable
+          disabled={isSigningOut}
+          onPress={() => {
+            void handleSignOut();
+          }}
+          className="rounded-full border border-slate-200 px-4 py-3"
+        >
+          <Text className="text-sm font-semibold text-slate-700">
+            {isSigningOut ? "Signing out..." : "Sign out"}
+          </Text>
+        </Pressable>
       </View>
 
       <SectionCard

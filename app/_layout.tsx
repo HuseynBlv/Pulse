@@ -3,11 +3,13 @@ import "../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
+import { AuthProvider } from "../hooks/useAuth";
+
 export default function RootLayout() {
   return (
-    <>
-      <StatusBar style="dark" />
+    <AuthProvider>
+      <StatusBar style="auto" />
       <Stack screenOptions={{ headerShown: false }} />
-    </>
+    </AuthProvider>
   );
 }
