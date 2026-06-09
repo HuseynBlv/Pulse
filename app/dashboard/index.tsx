@@ -2,8 +2,11 @@ import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { SectionCard } from "../../components/SectionCard";
+import { useTodayCheckin } from "../../hooks/useTodayCheckin";
 
 export default function DashboardHomeScreen() {
+  const { error, hasCheckedInToday, isLoading, todayCheckin } = useTodayCheckin();
+
   return (
     <ScrollView
       className="flex-1 bg-[#0A0A0A]"
@@ -23,17 +26,61 @@ export default function DashboardHomeScreen() {
         <Text className="text-sm font-medium uppercase tracking-[1.8px] text-zinc-500">
           Daily ritual
         </Text>
-        <Text className="mt-3 text-3xl font-semibold text-white">5 steps. About 2 minutes.</Text>
-        <Text className="mt-3 text-base leading-7 text-zinc-400">
-          Move through one question at a time, save your check-in, and come back later for
-          patterns.
-        </Text>
 
-        <Link href="./check-in" asChild>
-          <Pressable className="mt-6 h-14 items-center justify-center rounded-2xl bg-[#7C3AED]">
-            <Text className="text-base font-semibold text-white">Start today's check-in</Text>
-          </Pressable>
-        </Link>
+        {isLoading ? (
+          <>
+            <Text className="mt-3 text-3xl font-semibold text-white">Checking today's status...</Text>
+            <Text className="mt-3 text-base leading-7 text-zinc-400">
+              Pulling your latest check-in from Supabase.
+            </Text>
+          </>
+        ) : hasCheckedInToday && todayCheckin ? (
+          <>
+            <Text className="mt-3 text-3xl font-semibold text-white">Today's check-in is done</Text>
+            <Text className="mt-3 text-base leading-7 text-zinc-400">
+              You already checked in today, so the next entry opens tomorrow.
+            </Text>
+
+            <View className="mt-6 flex-row flex-wrap gap-3">
+              <MetricPill label="Sleep" value={todayCheckin.sleep} />
+              <MetricPill label="Energy" value={todayCheckin.energy} />
+              <MetricPill label="Anxiety" value={todayCheckin.anxiety} />
+              <MetricPill label="Focus" value={todayCheckin.focus} />
+              <MetricPill label="Mood" value={todayCheckin.mood} />
+            </View>
+
+            {todayCheckin.note ? (
+              <View className="mt-5 rounded-3xl border border-zinc-800 bg-[#0A0A0A] px-4 py-4">
+                <Text className="text-xs font-medium uppercase tracking-[1.4px] text-zinc-500">
+                  Note
+                </Text>
+                <Text className="mt-2 text-sm leading-6 text-zinc-300">{todayCheckin.note}</Text>
+              </View>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <Text className="mt-3 text-3xl font-semibold text-white">5 steps. About 2 minutes.</Text>
+            <Text className="mt-3 text-base leading-7 text-zinc-400">
+              Move through one question at a time, save your check-in, and come back later for
+              patterns.
+            </Text>
+
+            <Link href="./check-in" asChild>
+              <Pressable className="mt-6 h-14 items-center justify-center rounded-2xl bg-[#7C3AED]">
+                <Text className="text-base font-semibold text-white">Start today's check-in</Text>
+              </Pressable>
+            </Link>
+          </>
+        )}
+
+        {error ? (
+          <View className="mt-5 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <Text className="text-sm leading-6 text-red-200">
+              We could not load today's check-in. {error}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <SectionCard
@@ -61,5 +108,14 @@ export default function DashboardHomeScreen() {
         </View>
       </SectionCard>
     </ScrollView>
+  );
+}
+
+function MetricPill({ label, value }: { label: string; value: number }) {
+  return (
+    <View className="min-w-[92px] rounded-2xl border border-zinc-800 bg-[#0A0A0A] px-4 py-4">
+      <Text className="text-xs font-medium uppercase tracking-[1.3px] text-zinc-500">{label}</Text>
+      <Text className="mt-2 text-2xl font-semibold text-white">{value}/5</Text>
+    </View>
   );
 }

@@ -69,6 +69,11 @@ export function useCheckIn() {
     setIsSubmitting(false);
 
     if (insertError) {
+      if (insertError.code === "23505") {
+        setError("You already checked in today. Come back tomorrow for a new entry.");
+        return false;
+      }
+
       setError(insertError.message);
       return false;
     }
