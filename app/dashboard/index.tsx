@@ -1,123 +1,65 @@
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Link } from "expo-router";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
-import { MetricScorePicker } from "../../components/MetricScorePicker";
 import { SectionCard } from "../../components/SectionCard";
-import { useCheckIn } from "../../hooks/useCheckIn";
-import { METRIC_CONFIG, METRIC_KEYS } from "../../types/check-in";
 
-export default function CheckInScreen() {
-  const {
-    checkIn,
-    error,
-    isSubmitting,
-    isSupabaseConfigured,
-    lastSavedAt,
-    resetCheckIn,
-    setMetric,
-    setNote,
-    submitCheckIn,
-  } = useCheckIn();
-
+export default function DashboardHomeScreen() {
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      className="flex-1 bg-[#0A0A0A]"
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 24, paddingBottom: 120 }}
     >
-      <View className="mb-6">
-        <Text className="text-sm font-medium uppercase tracking-[2px] text-pulse-600">
-          Pulse
+      <View className="mb-8">
+        <Text className="text-sm font-medium uppercase tracking-[2px] text-[#A78BFA]">Pulse</Text>
+        <Text className="mt-3 text-4xl font-semibold leading-tight text-white">
+          Check in before the day gets noisy
         </Text>
-        <Text className="mt-3 text-4xl font-semibold leading-tight text-ink">
-          Daily 2-minute check-in
-        </Text>
-        <Text className="mt-3 text-base leading-7 text-slate-500">
-          Track sleep, energy, anxiety, focus, and mood in under two minutes so weekly
-          patterns are easy to spot.
+        <Text className="mt-3 text-base leading-7 text-zinc-400">
+          Capture how you slept, how your energy feels, and what your mind needs today.
         </Text>
       </View>
 
-      <SectionCard
-        eyebrow="Today"
-        title={checkIn.check_in_date}
-        description="Tap a score from 1 to 5 for each signal."
-      >
-        {METRIC_KEYS.map((metric) => {
-          const config = METRIC_CONFIG[metric];
+      <View className="rounded-[32px] border border-zinc-900 bg-zinc-950 px-6 py-6">
+        <Text className="text-sm font-medium uppercase tracking-[1.8px] text-zinc-500">
+          Daily ritual
+        </Text>
+        <Text className="mt-3 text-3xl font-semibold text-white">5 steps. About 2 minutes.</Text>
+        <Text className="mt-3 text-base leading-7 text-zinc-400">
+          Move through one question at a time, save your check-in, and come back later for
+          patterns.
+        </Text>
 
-          return (
-            <MetricScorePicker
-              key={metric}
-              hint={config.hint}
-              label={config.label}
-              lowLabel={config.lowLabel}
-              highLabel={config.highLabel}
-              value={checkIn[metric]}
-              onChange={(value) => setMetric(metric, value)}
-            />
-          );
-        })}
-      </SectionCard>
-
-      <SectionCard
-        eyebrow="Optional"
-        title="Quick context"
-        description="Add one short note to make patterns easier to understand later."
-      >
-        <TextInput
-          value={checkIn.note ?? ""}
-          onChangeText={setNote}
-          multiline
-          numberOfLines={4}
-          placeholder="What felt heavy, easy, or different today?"
-          placeholderTextColor="#94A3B8"
-          textAlignVertical="top"
-          className="min-h-28 rounded-3xl border border-slate-100 bg-slate-50 px-4 py-4 text-base text-ink"
-        />
-      </SectionCard>
-
-      <View className="mt-6 gap-3">
-        {!isSupabaseConfigured ? (
-          <View className="rounded-3xl border border-warning/20 bg-amber-50 px-4 py-4">
-            <Text className="text-sm font-medium text-ink">
-              Add your Supabase keys to `.env` before saving real check-ins.
-            </Text>
-          </View>
-        ) : null}
-
-        {error ? (
-          <View className="rounded-3xl border border-red-200 bg-red-50 px-4 py-4">
-            <Text className="text-sm font-medium text-red-700">{error}</Text>
-          </View>
-        ) : null}
-
-        {lastSavedAt ? (
-          <View className="rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-4">
-            <Text className="text-sm font-medium text-emerald-700">
-              Check-in saved at {lastSavedAt}.
-            </Text>
-          </View>
-        ) : null}
-
-        <Pressable
-          onPress={() => {
-            void submitCheckIn();
-          }}
-          className={`overflow-hidden rounded-full px-5 py-4 text-center text-base font-semibold text-white ${
-            isSubmitting ? "bg-pulse-500/70" : "bg-pulse-600"
-          }`}
-        >
-          <Text className="text-center text-base font-semibold text-white">
-            {isSubmitting ? "Saving..." : "Save today's check-in"}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          onPress={resetCheckIn}
-          className="rounded-full border border-slate-200 px-5 py-4"
-        >
-          <Text className="text-center text-base font-semibold text-slate-700">Reset form</Text>
-        </Pressable>
+        <Link href="./check-in" asChild>
+          <Pressable className="mt-6 h-14 items-center justify-center rounded-2xl bg-[#7C3AED]">
+            <Text className="text-base font-semibold text-white">Start today's check-in</Text>
+          </Pressable>
+        </Link>
       </View>
+
+      <SectionCard
+        eyebrow="Why it helps"
+        title="Small entries, clearer trends"
+        description="Pulse works best when the daily input feels light enough to keep doing."
+      >
+        <View className="gap-4">
+          <View className="rounded-3xl bg-zinc-900 px-4 py-4">
+            <Text className="text-sm font-medium uppercase tracking-[1.4px] text-zinc-500">
+              Sleep and energy
+            </Text>
+            <Text className="mt-2 text-sm leading-6 text-zinc-300">
+              Spot when better sleep actually translates into steadier energy.
+            </Text>
+          </View>
+          <View className="rounded-3xl bg-zinc-900 px-4 py-4">
+            <Text className="text-sm font-medium uppercase tracking-[1.4px] text-zinc-500">
+              Anxiety and focus
+            </Text>
+            <Text className="mt-2 text-sm leading-6 text-zinc-300">
+              Notice which days feel scattered, overloaded, or unexpectedly calm.
+            </Text>
+          </View>
+        </View>
+      </SectionCard>
     </ScrollView>
   );
 }

@@ -36,6 +36,12 @@ export default function DashboardLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Home",
+        }}
+      />
+      <Tabs.Screen
+        name="check-in"
+        options={{
           title: "Check-in",
         }}
       />

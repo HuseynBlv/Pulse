@@ -5,7 +5,20 @@ import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "../types/supabase";
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co";
+function normalizeSupabaseUrl(value?: string) {
+  const fallback = "https://placeholder.supabase.co";
+
+  if (!value) {
+    return fallback;
+  }
+
+  return value
+    .trim()
+    .replace(/\/rest\/v1\/?$/i, "")
+    .replace(/\/+$/g, "");
+}
+
+const supabaseUrl = normalizeSupabaseUrl(process.env.EXPO_PUBLIC_SUPABASE_URL);
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key";
 const isServer = typeof window === "undefined";
 const storage = isServer

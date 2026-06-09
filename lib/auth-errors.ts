@@ -25,5 +25,5 @@ export function getFriendlyAuthErrorMessage(message: string) {
     return "Too many email requests in a short time. Please wait a minute and try again.";
   }
 
-  return "Something went wrong while talking to Supabase. Please try again.";
+  return `Supabase error: ${message}`;
 }
