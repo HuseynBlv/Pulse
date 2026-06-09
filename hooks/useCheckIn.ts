@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { METRIC_KEYS, type DailyCheckIn, type CheckInMetric, type MetricScore } from "../types/check-in";
+import type { CheckinInsert } from "../types/supabase";
 
 function createDefaultCheckIn(): DailyCheckIn {
   return {
@@ -60,13 +61,10 @@ export function useCheckIn() {
       {
         check_in_date: checkIn.check_in_date,
         note: checkIn.note?.trim() || null,
-      } as {
-        check_in_date: string;
-        note: string | null;
-      } & Record<CheckInMetric, MetricScore>,
+      } as Pick<CheckinInsert, "check_in_date" | "note"> & Record<CheckInMetric, MetricScore>,
     );
 
-    const { error: insertError } = await supabase.from("daily_checkins").insert(payload);
+    const { error: insertError } = await supabase.from("checkins").insert(payload);
 
     setIsSubmitting(false);
 

@@ -35,7 +35,7 @@ export default function InsightsScreen() {
           Spot patterns before they snowball
         </Text>
         <Text className="mt-3 text-base leading-7 text-slate-500">
-          This screen is ready for charts and trend logic once your `daily_checkins` table is
+          This screen is ready for charts and trend logic once your `checkins` table is
           populated.
         </Text>
       </View>
